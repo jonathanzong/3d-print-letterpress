@@ -1,0 +1,26 @@
+{
+  "name": "3d-print-letterpress",
+  "version": "0.0.1",
+  "author": "Jonathan Zong <jonathan@jonathanzong.com>",
+  "description": "OpenType and TrueType to 3D-printable .stl of type for letterpress printing",
+  "contributors": [
+    {
+      "name": "Jonathan Zong",
+      "email": "jonathan@jonathanzong.com"
+    }
+  ],
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "bin": "./index.js",
+  "global": "true",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "opentype": "0.4.4",
+    "jsdom": "3.1.1"
+  },
+  "license": "MIT"
+}

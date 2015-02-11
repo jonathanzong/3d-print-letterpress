@@ -1,5 +1,4 @@
 # 3d-print-letterpress
-========
 Converts OpenType and TrueType (.otf and .ttf) files into 3D printable (.stl) models of letterpress type for a specified point size and glyph.
 
 

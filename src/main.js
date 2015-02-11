@@ -58,7 +58,7 @@ opentype.load(file, function (err, font) {
         var alignNickToBase = new JSM.Coord (
                 bboxdims.min.x + bboxWidthX / 2,
                 bboxdims.max.y - (3 * typeHigh / 4),
-                capTopZ
+                capTopZ - pointsize
             );
         nick.Transform(JSM.TranslationTransformation (alignNickToBase));
         base = JSM.BooleanOperation ('Difference', base, nick);
@@ -81,15 +81,18 @@ opentype.load(file, function (err, font) {
         if (faceName.indexOf(".") != -1)
             faceName = faceName.substring(0, faceName.indexOf("."));
 
+        var dirname = faceName + "STL/";
         var filename = faceName + name + pointsize + "pt.stl";
 
-        fs.writeFile(filename, stl, function(err) {
-            if(err) {
-                console.log(err);
-            } else {
-                console.log("output written to " + filename);
-            }
-        });
+        fs.mkdir(dirname, (function () {
+            fs.writeFile(arguments[0], arguments[1], (function(err) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log("output written to " + this);
+                }
+            }).bind(arguments[0]));
+        }).bind(undefined, dirname + filename, stl));
     }
 });
 

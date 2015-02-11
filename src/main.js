@@ -45,9 +45,6 @@ opentype.load(file, function (err, font) {
         var faceHeight = 2;
         var base = JSM.GenerateCuboid(bboxWidthX, typeHigh - faceHeight, pointsize);
 
-        var nick = JSM.GenerateCylinder(5, bboxWidthX);
-        base = JSM.BooleanOperation ('Difference', base, nick);
-
         var alignBaseToLetter = JSM.TranslationTransformation (
             new JSM.Coord (
                 bboxdims.min.x + bboxWidthX / 2,
@@ -55,7 +52,24 @@ opentype.load(file, function (err, font) {
                 capTopZ - pointsize / 2
             ));
         base.Transform (alignBaseToLetter);
+
+        var nick = JSM.GenerateCylinder(faceHeight, bboxWidthX, 50, true, true);
+        nick.Transform(JSM.RotationYTransformation(Math.PI/2));
+        var alignNickToBase = new JSM.Coord (
+                bboxdims.min.x + bboxWidthX / 2,
+                bboxdims.max.y - (3 * typeHigh / 4),
+                capTopZ
+            );
+        nick.Transform(JSM.TranslationTransformation (alignNickToBase));
+        base = JSM.BooleanOperation ('Difference', base, nick);
+
         model.AddBody(base);
+
+        var rotateUpright = JSM.RotationXTransformation(Math.PI/2);
+
+        for (var n = 0, bodies = model.BodyCount(); n < bodies; n++) {
+            model.GetBody(n).Transform(rotateUpright);
+        }
 
         var stl = JSM.ExportModelToStl(model);
 

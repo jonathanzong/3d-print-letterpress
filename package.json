@@ -19,8 +19,8 @@
     "url": ""
   },
   "dependencies": {
-    "opentype": "0.4.4",
-    "jsdom": "3.1.1"
+    "opentype": "git+ssh://git@github.com:nodebox/opentype.js.git",
+    "point-at-length": "git+ssh://git@github.com:jonathanzong/point-at-length.git"
   },
   "license": "MIT"
 }

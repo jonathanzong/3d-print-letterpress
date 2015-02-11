@@ -74,24 +74,21 @@ opentype.load(file, function (err, font) {
         var stl = JSM.ExportModelToStl(model);
 
         var name = glyphs[a].name;
-        fs.mkdir("../out/", function () { 
 
-            var faceName = file;
-            if (faceName.indexOf("/") != -1)
-                faceName = faceName.substring(faceName.lastIndexOf("/") + 1);
-            if (faceName.indexOf(".") != -1)
-                faceName = faceName.substring(0, faceName.indexOf("."));
+        var faceName = file;
+        if (faceName.indexOf("/") != -1)
+            faceName = faceName.substring(faceName.lastIndexOf("/") + 1);
+        if (faceName.indexOf(".") != -1)
+            faceName = faceName.substring(0, faceName.indexOf("."));
 
-            var filename = faceName + name + pointsize + "pt.stl";
+        var filename = faceName + name + pointsize + "pt.stl";
 
-            fs.writeFile("../out/" + filename, stl, function(err) {
-                if(err) {
-                    console.log(err);
-                } else {
-
-                    console.log("output written to out/" + filename);
-                }
-            }); 
+        fs.writeFile(filename, stl, function(err) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log("output written to " + filename);
+            }
         });
     }
 });

@@ -20,6 +20,8 @@ Usage Example
 $ 3d-print-letterpress Gotham-Book.otf 16 H
 output written to Gotham-BookH16pt.stl
 ```
+<img src="https://cloud.githubusercontent.com/assets/4650077/6142836/854f352c-b18c-11e4-861d-26203150cf2d.png" width="250"/>
+
 
 Dependencies
 -----------

@@ -24,7 +24,6 @@ opentype.load(file, function (err, font) {
     for (var a = 0, b = glyphs.length; a < b; a++) {
         var commands = glyphs[a].getPath(0, 0, pointsize).commands;
         var name = glyphs[a].name;
-        console.log(name);
 
         var model = new JSM.Model ();
         var polygons = segmentElem(commands, 1);
@@ -41,13 +40,16 @@ opentype.load(file, function (err, font) {
             }
         }
 
-        console.log(JSON.stringify(model, null, 4));
         var bboxdims = model.GetBody(0).GetBoundingBox();
         var bboxWidthX = bboxdims.max.x - bboxdims.min.x;
 
         var typeHigh = 0.918 * 72;
         var faceHeight = 5;
         var base = JSM.GenerateCuboid(bboxWidthX, typeHigh - faceHeight, pointsize);
+
+        var nick = JSM.GenerateCylinder(5, bboxWidthX, 1, true, true);
+        model.AddBody(nick);
+        // base = JSM.BooleanOperation ('Difference', base, nick);
 
         var alignBaseToLetter = JSM.TranslationTransformation (
             new JSM.Coord (
@@ -64,16 +66,24 @@ opentype.load(file, function (err, font) {
         model.AddBody(base);
         // model.AddBody(bbox);
 
-        console.log(bboxdims.max.y - bboxdims.min.y);
-
         var stl = JSM.ExportModelToStl(model);
 
         fs.mkdir("../out/", function () { 
-            fs.writeFile("../out/" + name + pointsize + "pt.stl", stl, function(err) {
+
+            var faceName = file;
+            if (faceName.indexOf("/") != -1)
+                faceName = faceName.substring(faceName.lastIndexOf("/") + 1);
+            if (faceName.indexOf(".") != -1)
+                faceName = faceName.substring(0, faceName.indexOf("."));
+
+            var filename = faceName + name + pointsize + "pt.stl";
+
+            fs.writeFile("../out/" + filename, stl, function(err) {
                 if(err) {
                     console.log(err);
                 } else {
-                    console.log("output written to out/" + name + pointsize + "pt.stl");
+
+                    console.log("output written to out/" + filename);
                 }
             }); 
         });

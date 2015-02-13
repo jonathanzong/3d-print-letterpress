@@ -9,7 +9,7 @@ var ContourPolygonToPrisms = require("../lib/contourpolygontoprisms.js");
 var args = process.argv.slice(2);
 var file = args[0];
 var pointsize = args[1] ? args[1] : 72;
-var ch = args[2] ? args[2] : 'A';
+var ch = args[2] ? dedupe(args[2]) : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 
 opentype.load(file, function (err, font) {
@@ -116,3 +116,13 @@ function getModelForGlyph(glyph) {
 
     return model;
 } 
+
+function dedupe(s) {
+    var firsts = "";
+    for (var i = 0, len = s.length; i<len; i++) {
+        if (i == s.indexOf(s[i])) {
+            firsts += s[i];
+        }
+    }
+    return firsts;
+}

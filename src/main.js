@@ -63,6 +63,10 @@ opentype.load(file, function (err, font) {
         nick.Transform(JSM.TranslationTransformation (alignNickToBase));
         base = JSM.BooleanOperation ('Difference', base, nick);
 
+        while (model.bodies.length > 0) {
+            base = JSM.BooleanOperation ('Union', base, model.bodies.pop());
+        }
+
         model.AddBody(base);
 
         var rotateUpright = JSM.RotationXTransformation(Math.PI/2);

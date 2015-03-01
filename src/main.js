@@ -1,67 +1,25 @@
 "use strict";
 
 var fs = require('fs');
+var path = require('path');
 var opentype = require("opentype.js");
 var JSM = require("../lib/jsmodeler.js");
 var segmentElem = require("../lib/segmentelem.js");
 var ContourPolygonToPrisms = require("../lib/contourpolygontoprisms.js");
 
 var args = process.argv.slice(2);
-var fileOrSvgPath = args[0];
+var file = args[0];
 var pointsize = args[1] ? args[1] : 72;
 var ch = args[2] ? dedupe(args[2]) : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 if (args.length == 0) {
     console.log("Usage: 3d-print-letterpress type-file [point-size [glyphs]]");
-    console.log("Usage: 3d-print-letterpress svg-path-string");
+    console.log("Usage: 3d-print-letterpress svg-file");
 }
 else {
-    if ((/([MLHVCSQTA][^a-z]+)+Z/ig).test(fileOrSvgPath)) {
-        // handle arbitrary svg path string
-        var pathString = fileOrSvgPath;
-        var point = require("point-at-length");
-        var parsed = point(pathString)._path;
-        var commands = [];
-        while (parsed.length > 0) {
-            var cmd = parsed.shift();
-            var cmdType = cmd.shift();
-            var cmdObj = {
-                'type' : cmdType
-            }
-            switch (cmdType) {
-                case 'Z' :
-                    break;
-                case 'c' : 
-                case 'C' : 
-                    cmdObj.x1 = cmd.shift();
-                    cmdObj.y1 = cmd.shift();
-                    cmdObj.x2 = cmd.shift();
-                    cmdObj.y2 = cmd.shift();
-                    cmdObj.x = cmd.shift();
-                    cmdObj.y = cmd.shift();
-                    break;
-                case 'q' :
-                case 'Q' :
-                    cmdObj.x1 = cmd.shift();
-                    cmdObj.y1 = cmd.shift();
-                    cmdObj.x = cmd.shift();
-                    cmdObj.y = cmd.shift();
-                    break;
-                default :
-                    cmdObj.x = cmd.shift();
-                    cmdObj.y = cmd.shift();
-                    break;
-            }
-            commands.push(cmdObj);
-        }
-        var model = getModelForCommands(commands);
-        var bbox = model.GetBody(0).GetBoundingBox();
-        pointsize = bbox.max.z - bbox.min.z;
-        writeTypeSTLForModel(model, bbox.max.z, 'svg_path');
-    }
-    else {
+    var ext = path.extname(file);
+    if (ext == '.otf' || ext == '.ttf') {
         // parse type file
-        var file = fileOrSvgPath;
         opentype.load(file, function (err, font) {
             if (err) {
                 console.error("File '" + args[0] + "' not found, exiting.");
@@ -84,9 +42,77 @@ else {
                 var model = getModelForCommands(glyphs[a].getPath(0, 0, pointsize).commands);
                 var glyphCh = glyphs[a].name;
                 var glyphName = glyphCh == glyphCh.toLowerCase() ? "Lower" + glyphCh : "Upper" + glyphCh;
-                writeTypeSTLForModel(model, capTopZ, file, glyphName);
+                writeTypeSTLForModel(model, capTopZ, path.basename(file, ext), glyphName);
             }
         });
+    }
+    else if (ext == '.svg') {
+        // handle arbitrary svg path string
+        fs.readFile(file, function (err, data) {
+            if (err) {
+                throw err; 
+            }
+            else {
+                var matches = data.toString().match(/([MLHVCSQTA][^a-z]+)+Z/ig);
+                var point = require("point-at-length");
+                // generate one model from matches
+                var models = matches.map(function (elem) {
+                    var parsed = point(elem)._path;
+                    var commands = [];
+                    while (parsed.length > 0) {
+                        var cmd = parsed.shift();
+                        var cmdType = cmd.shift();
+                        var cmdObj = {
+                            'type' : cmdType
+                        }
+                        switch (cmdType) {
+                            case 'Z' :
+                                break;
+                            case 'h' :
+                            case 'H' :
+                                cmdObj.x = cmd.shift();
+                                break;
+                            case 'v' :
+                            case 'V' :
+                                cmdObj.y = cmd.shift();
+                                break;
+                            default :
+                                var i = 1;
+                                while (cmd.length > 2) {
+                                    cmdObj['k'+i] = cmd.shift();
+                                    i++;
+                                }
+                                cmdObj.x = cmd.shift();
+                                cmdObj.y = cmd.shift();
+                                break;
+                        }
+                        commands.push(cmdObj);      
+                    }
+                    return getModelForCommands(commands);
+                });
+                var model = models.shift();
+                while (models.length > 0) {
+                    model.bodies.concat(models.shift().bodies);
+                }
+                var bboxdims = model.GetBody(0).GetBoundingBox();
+                for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {
+                    var bbox = model.GetBody(n).GetBoundingBox();
+                    bboxdims.max.x = Math.max(bboxdims.max.x, bbox.max.x);
+                    bboxdims.max.y = Math.max(bboxdims.max.y, bbox.max.y);
+                    bboxdims.max.z = Math.max(bboxdims.max.z, bbox.max.z);
+
+                    bboxdims.min.x = Math.min(bboxdims.min.x, bbox.min.x);
+                    bboxdims.min.y = Math.min(bboxdims.min.y, bbox.min.y);
+                    bboxdims.min.z = Math.min(bboxdims.min.z, bbox.min.z);
+                }
+                pointsize = bboxdims.max.z - bboxdims.min.z + 1;
+                writeTypeSTLForModel(model, bboxdims.max.z, 'svg_path', path.basename(file, ext));
+            }
+        });
+    }
+    else {
+        console.error("unrecognized extension: " + ext);
+        console.error("expected: ( .otf | .ttf | .svg )");
     }
 }
 
@@ -94,7 +120,7 @@ else {
 Writes STL file describing 3d model of a piece of type to an output folder.
 params:
 model - model object of the glyph
-maxHeightZ - the maximum z coordinate of the glyph's bounding box
+maxHeightZ - the maximum z coordinate of the typeface's bounding box (i.e. highest ascender)
 faceName - the name of the typeface (ex. Gotham-Book)
 glyphName - the name of the glyph (ex. A)
 */
@@ -150,15 +176,8 @@ function writeTypeSTLForModel(model, maxHeightZ, faceName, glyphName) {
 
     var stl = JSM.ExportModelToStl(model);
 
-    glyphName = glyphName ? glyphName : '';
-
-    if (faceName.indexOf("/") != -1)
-        faceName = faceName.substring(faceName.lastIndexOf("/") + 1);
-    if (faceName.indexOf(".") != -1)
-        faceName = faceName.substring(0, faceName.indexOf("."));
-
     var dirname = faceName + "STL/";
-    var filename = faceName + glyphName + pointsize + "pt.stl";
+    var filename = faceName + pointsize + "pt" + glyphName + ".stl";
 
     fs.mkdir(dirname, (function () {
         fs.writeFile(arguments[0], arguments[1], (function(err) {

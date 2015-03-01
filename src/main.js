@@ -16,7 +16,8 @@ if (args.length == 0) {
     console.log("Usage: 3d-print-letterpress svg-path-string");
 }
 else {
-    if (fileOrSvgPath && /[MLHVCSQTAZ].*Z/i.test(fileOrSvgPath)) {
+    if (/[MLHVCSQTA].*Z/i.test(fileOrSvgPath)) {
+        // handle arbitrary svg path string
         var pathString = fileOrSvgPath;
         var point = require("point-at-length");
         var parsed = point(pathString)._path;
@@ -59,6 +60,7 @@ else {
         writeTypeSTLForModel(model, bbox.max.z, 'svg_path');
     }
     else {
+        // parse type file
         var file = fileOrSvgPath;
         opentype.load(file, function (err, font) {
             if (err) {
@@ -81,7 +83,14 @@ else {
     }
 }
 
-
+/*
+Writes STL file describing 3d model of a piece of type to an output folder.
+params:
+model - model object of the glyph
+maxHeightZ - the maximum z coordinate of the glyph's bounding box
+faceName - the name of the typeface (ex. Gotham-Book)
+glyphName - the name of the glyph (ex. A)
+*/
 function writeTypeSTLForModel(model, maxHeightZ, faceName, glyphName) {
     var bboxdims = model.GetBody(0).GetBoundingBox();
     for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {
@@ -154,6 +163,9 @@ function writeTypeSTLForModel(model, maxHeightZ, faceName, glyphName) {
     }).bind(undefined, dirname + filename, stl));
 }
 
+/*
+Returns a model object described by the svg commands, 10 units deep in the y axis.
+*/
 function getModelForCommands(commands) {
     var model = new JSM.Model ();
     var polygons = segmentElem(commands, 1);
@@ -172,6 +184,9 @@ function getModelForCommands(commands) {
     return model;
 } 
 
+/*
+Returns string s without any duplicate characters
+*/
 function dedupe(s) {
     var firsts = "";
     for (var i = 0, len = s.length; i<len; i++) {

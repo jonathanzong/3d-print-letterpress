@@ -22,7 +22,7 @@ Usage: 3d-print-letterpress type-file [point-size [glyphs]]
 Usage: 3d-print-letterpress svg-file
 ```
 
-**Keep in mind that STL files are unitless, and that you will have to scale your models to type-high (0.918 in or 23.317 mm).**
+Keep in mind that STL files are unitless, and that you will have to scale your models to type-high (0.918 in or 23.317 mm).
 
 ### Single Glyph
 
@@ -40,6 +40,7 @@ output written to Gotham-BookSTL/Gotham-Book16ptUpperO.stl
 output written to Gotham-BookSTL/Gotham-Book16ptUpperM.stl
 output written to Gotham-BookSTL/Gotham-Book16ptUpperG.stl
 ```
+<img src="https://cloud.githubusercontent.com/assets/4650077/6433055/f4648cf0-c032-11e4-858a-e6f5357baf8a.png" width="250"/>
 
 ### SVG Path File
 
@@ -47,7 +48,7 @@ output written to Gotham-BookSTL/Gotham-Book16ptUpperG.stl
 $ 3d-print-letterpress bird.svg
 output written to svg_pathSTL/svg_path97ptbird.stl
 ```
-
+<img src="https://cloud.githubusercontent.com/assets/4650077/6433035/cb66b486-c032-11e4-9026-507926ae7cdc.png" width="250"/>
 
 Dependencies
 -----------
@@ -55,7 +56,7 @@ Dependencies
 
 - [opentype](https://github.com/nodebox/opentype.js) -- parser for OpenType and TrueType formats
 - [JSModeler](https://github.com/kovacsv/JSModeler) -- 3D modeling library modifed here to work in Node.js (removed references to the DOM)
-- [point-at-length](https://github.com/substack/point-at-length) -- SVG utility to perform path calculations
+- [node-raphael](https://github.com/dodo/node-raphael) -- SVG utility to perform path calculations
 
 
 License

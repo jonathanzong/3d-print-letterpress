@@ -166,9 +166,10 @@ function writeTypeSTLForModel(model, maxHeightZ, faceName, glyphName) {
     nick.Transform(JSM.TranslationTransformation (alignNickToBase));
     base = JSM.BooleanOperation ('Difference', base, nick);
 
-    while (model.bodies.length > 0) {
-        base = JSM.BooleanOperation ('Union', base, model.bodies.pop());
-    }
+    // TODO figure out why these lines kill the base for certain svgs
+    // while (model.bodies.length > 0) {
+    //     base = JSM.BooleanOperation ('Union', base, model.bodies.pop());
+    // }
 
     model.AddBody(base);
 

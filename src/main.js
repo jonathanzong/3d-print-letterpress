@@ -16,7 +16,7 @@ if (args.length == 0) {
     console.log("Usage: 3d-print-letterpress svg-path-string");
 }
 else {
-    if (/[MLHVCSQTA].*Z/i.test(fileOrSvgPath)) {
+    if ((/([MLHVCSQTA][^a-z]+)+Z/ig).test(fileOrSvgPath)) {
         // handle arbitrary svg path string
         var pathString = fileOrSvgPath;
         var point = require("point-at-length");
@@ -70,14 +70,21 @@ else {
 
             var glyphs = font.stringToGlyphs(ch);
 
-            // TODO the ascender line could be taller than the cap line
-            var capTopZ = 
-                getModelForCommands(font.charToGlyph('H').getPath(0, 0, pointsize).commands)
-                .GetBody(0).GetBoundingBox().max.z;
+            // find highest of ascenders, cap height, etc
+            var capTopZ = font.stringToGlyphs('HAkl').map(function(val, idx) {
+                return getModelForCommands(val.getPath(0, 0, pointsize).commands)
+                    .GetBody(0)
+                    .GetBoundingBox()
+                    .max.z;
+            }).reduce(function(previousValue, currentValue) {
+                return Math.max(previousValue, currentValue);
+            });
 
             for (var a = 0, b = glyphs.length; a < b; a++) {
                 var model = getModelForCommands(glyphs[a].getPath(0, 0, pointsize).commands);
-                writeTypeSTLForModel(model, capTopZ, file, glyphs[a].name);
+                var glyphCh = glyphs[a].name;
+                var glyphName = glyphCh == glyphCh.toLowerCase() ? "Lower" + glyphCh : "Upper" + glyphCh;
+                writeTypeSTLForModel(model, capTopZ, file, glyphName);
             }
         });
     }
@@ -108,13 +115,14 @@ function writeTypeSTLForModel(model, maxHeightZ, faceName, glyphName) {
 
     var typeHigh = 0.918 * 72;
     var faceHeight = 2;
+    var topPadding = 0.5;
     var base = JSM.GenerateCuboid(bboxWidthX, typeHigh - faceHeight, pointsize);
 
     var alignBaseToLetter = JSM.TranslationTransformation (
         new JSM.Coord (
             bboxdims.min.x + bboxWidthX / 2,
             bboxdims.max.y - (typeHigh / 2) - (faceHeight / 2),
-            maxHeightZ - pointsize / 2 + 0.5
+            maxHeightZ - pointsize / 2 + topPadding
         ));
     base.Transform (alignBaseToLetter);
 

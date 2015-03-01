@@ -21,11 +21,11 @@ opentype.load(file, function (err, font) {
     var glyphs = font.stringToGlyphs(ch);
 
     var capTopZ = 
-        getModelForGlyph(font.charToGlyph('H'))
+        getModelForCommands(font.charToGlyph('H').getPath(0, 0, pointsize).commands)
         .GetBody(0).GetBoundingBox().max.z;
 
     for (var a = 0, b = glyphs.length; a < b; a++) {
-        var model = getModelForGlyph(glyphs[a]);
+        var model = getModelForCommands(glyphs[a].getPath(0, 0, pointsize).commands);
 
         var bboxdims = model.GetBody(0).GetBoundingBox();
         for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {
@@ -49,7 +49,7 @@ opentype.load(file, function (err, font) {
             new JSM.Coord (
                 bboxdims.min.x + bboxWidthX / 2,
                 bboxdims.max.y - (typeHigh / 2) - (faceHeight / 2),
-                capTopZ - pointsize / 2
+                capTopZ - pointsize / 2 + 0.5
             ));
         base.Transform (alignBaseToLetter);
 
@@ -100,9 +100,7 @@ opentype.load(file, function (err, font) {
     }
 });
 
-function getModelForGlyph(glyph) {
-    var commands = glyph.getPath(0, 0, pointsize).commands;
-
+function getModelForCommands(commands) {
     var model = new JSM.Model ();
     var polygons = segmentElem(commands, 1);
 

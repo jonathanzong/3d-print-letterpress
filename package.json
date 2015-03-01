@@ -1,6 +1,6 @@
 {
   "name": "3d-print-letterpress",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Jonathan Zong <jonathan@jonathanzong.com>",
   "description": "OpenType and TrueType to 3D-printable .stl of type for letterpress printing",
   "contributors": [

@@ -16,25 +16,36 @@ $ npm install git+ssh://git@github.com:jonathanzong/3d-print-letterpress.git -g
 Usage Example
 -------------
 
-3d-print-letterpress type-file [point-size [glyphs]]
+```
+$ 3d-print-letterpress 
+Usage: 3d-print-letterpress type-file [point-size [glyphs]]
+Usage: 3d-print-letterpress svg-file
+```
+
+**Keep in mind that STL files are unitless, and that you will have to scale your models to type-high (0.918 in or 23.317 mm).**
 
 ### Single Glyph
 
 ```
 $ 3d-print-letterpress Gotham-Book.otf 16 H
-output written to Gotham-BookSTL/Gotham-BookH16pt.stl
+output written to Gotham-BookSTL/Gotham-Book16ptUpperH.stl
 ```
 <img src="https://cloud.githubusercontent.com/assets/4650077/6158011/49adf192-b214-11e4-852e-cccc9b920b0d.png" width="250"/>
-
-Keep in mind that STL files are unitless, and that you will have to scale your models to type-high (0.918 in or 23.317 mm).
 
 ### Multiple Glyphs
 
 ```
 $ 3d-print-letterpress Gotham-Book.otf 16 OMG
-output written to Gotham-BookSTL/Gotham-BookO16pt.stl
-output written to Gotham-BookSTL/Gotham-BookM16pt.stl
-output written to Gotham-BookSTL/Gotham-BookG16pt.stl
+output written to Gotham-BookSTL/Gotham-Book16ptUpperO.stl
+output written to Gotham-BookSTL/Gotham-Book16ptUpperM.stl
+output written to Gotham-BookSTL/Gotham-Book16ptUpperG.stl
+```
+
+### SVG Path File
+
+```
+$ 3d-print-letterpress bird.svg
+output written to svg_pathSTL/svg_path97ptbird.stl
 ```
 
 

@@ -60,7 +60,6 @@ else {
                     r = r.raphael;
                     var models = matches.map(function (elem) {
                         var p = r.parsePathString(elem);
-                        console.log(p);
                         var commands = [];
                         while (p.length > 0) {
                             var cmd = p.shift();
@@ -69,6 +68,7 @@ else {
                                 'type' : cmdType
                             }
                             switch (cmdType) {
+                                case 'z' :
                                 case 'Z' :
                                     break;
                                 case 'h' :
@@ -91,7 +91,6 @@ else {
                             }
                             commands.push(cmdObj);      
                         }
-                        console.log(commands);
                         return getModelForCommands(commands);
                     });
                     var model = models.shift();

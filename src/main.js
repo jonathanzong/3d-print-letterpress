@@ -54,59 +54,64 @@ else {
             }
             else {
                 var matches = data.toString().match(/([MLHVCSQTA][^a-z]+)+Z/ig);
-                var point = require("point-at-length");
+                var raphael = require("node-raphael");
                 // generate one model from matches
-                var models = matches.map(function (elem) {
-                    var parsed = point(elem)._path;
-                    var commands = [];
-                    while (parsed.length > 0) {
-                        var cmd = parsed.shift();
-                        var cmdType = cmd.shift();
-                        var cmdObj = {
-                            'type' : cmdType
+                raphael.generate(1280, 1280, function (r) {
+                    r = r.raphael;
+                    var models = matches.map(function (elem) {
+                        var p = r.parsePathString(elem);
+                        console.log(p);
+                        var commands = [];
+                        while (p.length > 0) {
+                            var cmd = p.shift();
+                            var cmdType = cmd.shift();
+                            var cmdObj = {
+                                'type' : cmdType
+                            }
+                            switch (cmdType) {
+                                case 'Z' :
+                                    break;
+                                case 'h' :
+                                case 'H' :
+                                    cmdObj.x = cmd.shift();
+                                    break;
+                                case 'v' :
+                                case 'V' :
+                                    cmdObj.y = cmd.shift();
+                                    break;
+                                default :
+                                    var i = 1;
+                                    while (cmd.length > 2) {
+                                        cmdObj['z'+i] = cmd.shift();
+                                        i++;
+                                    }
+                                    cmdObj.x = cmd.shift();
+                                    cmdObj.y = cmd.shift();
+                                    break;
+                            }
+                            commands.push(cmdObj);      
                         }
-                        switch (cmdType) {
-                            case 'Z' :
-                                break;
-                            case 'h' :
-                            case 'H' :
-                                cmdObj.x = cmd.shift();
-                                break;
-                            case 'v' :
-                            case 'V' :
-                                cmdObj.y = cmd.shift();
-                                break;
-                            default :
-                                var i = 1;
-                                while (cmd.length > 2) {
-                                    cmdObj['k'+i] = cmd.shift();
-                                    i++;
-                                }
-                                cmdObj.x = cmd.shift();
-                                cmdObj.y = cmd.shift();
-                                break;
-                        }
-                        commands.push(cmdObj);      
+                        console.log(commands);
+                        return getModelForCommands(commands);
+                    });
+                    var model = models.shift();
+                    while (models.length > 0) {
+                        model.bodies.concat(models.shift().bodies);
                     }
-                    return getModelForCommands(commands);
-                });
-                var model = models.shift();
-                while (models.length > 0) {
-                    model.bodies.concat(models.shift().bodies);
-                }
-                var bboxdims = model.GetBody(0).GetBoundingBox();
-                for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {
-                    var bbox = model.GetBody(n).GetBoundingBox();
-                    bboxdims.max.x = Math.max(bboxdims.max.x, bbox.max.x);
-                    bboxdims.max.y = Math.max(bboxdims.max.y, bbox.max.y);
-                    bboxdims.max.z = Math.max(bboxdims.max.z, bbox.max.z);
+                    var bboxdims = model.GetBody(0).GetBoundingBox();
+                    for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {
+                        var bbox = model.GetBody(n).GetBoundingBox();
+                        bboxdims.max.x = Math.max(bboxdims.max.x, bbox.max.x);
+                        bboxdims.max.y = Math.max(bboxdims.max.y, bbox.max.y);
+                        bboxdims.max.z = Math.max(bboxdims.max.z, bbox.max.z);
 
-                    bboxdims.min.x = Math.min(bboxdims.min.x, bbox.min.x);
-                    bboxdims.min.y = Math.min(bboxdims.min.y, bbox.min.y);
-                    bboxdims.min.z = Math.min(bboxdims.min.z, bbox.min.z);
-                }
-                pointsize = bboxdims.max.z - bboxdims.min.z + 1;
-                writeTypeSTLForModel(model, bboxdims.max.z, 'svg_path', path.basename(file, ext));
+                        bboxdims.min.x = Math.min(bboxdims.min.x, bbox.min.x);
+                        bboxdims.min.y = Math.min(bboxdims.min.y, bbox.min.y);
+                        bboxdims.min.z = Math.min(bboxdims.min.z, bbox.min.z);
+                    }
+                    pointsize = Math.ceil(bboxdims.max.z - bboxdims.min.z + 1);
+                    writeTypeSTLForModel(model, bboxdims.max.z, 'svg_path', path.basename(file, ext));
+                });
             }
         });
     }

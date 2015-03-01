@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "opentype": "git+ssh://git@github.com:nodebox/opentype.js.git",
-    "point-at-length": "git+ssh://git@github.com:jonathanzong/point-at-length.git"
+    "node-raphael": "git+ssh://git@github.com:dodo/node-raphael.git"
   },
   "license": "MIT"
 }

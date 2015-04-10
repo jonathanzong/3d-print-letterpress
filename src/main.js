@@ -95,7 +95,7 @@ else {
                     });
                     var model = models.shift();
                     while (models.length > 0) {
-                        model.bodies.concat(models.shift().bodies);
+                        model.bodies = model.bodies.concat(models.shift().bodies);
                     }
                     var bboxdims = model.GetBody(0).GetBoundingBox();
                     for (var n = 1, bodies = model.BodyCount(); n < bodies; n++) {

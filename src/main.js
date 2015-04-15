@@ -53,7 +53,7 @@ else {
                 throw err; 
             }
             else {
-                var matches = data.toString().match(/([MLHVCSQTA][^a-z]+)+Z/ig);
+                var matches = data.toString().replace(/ /g,'').match(/(([MLHVCSQTA][^a-z]+)+Z)+/ig);
                 var raphael = require("node-raphael");
                 // generate one model from matches
                 raphael.generate(1280, 1280, function (r) {

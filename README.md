@@ -3,6 +3,8 @@ Converts OpenType and TrueType (.otf and .ttf) files into 3D printable (.stl) mo
 
 This project brings together two technologies, old and new, that empower people through the democratization of production.
 
+<img src="https://cloud.githubusercontent.com/assets/4650077/7669322/b459ca72-fc3b-11e4-965d-63a610a43abe.jpg" width="250"/>
+
 Installation
 ------------
 
@@ -49,6 +51,10 @@ $ 3d-print-letterpress bird.svg
 output written to svg_pathSTL/svg_path97ptbird.stl
 ```
 <img src="https://cloud.githubusercontent.com/assets/4650077/6433035/cb66b486-c032-11e4-9026-507926ae7cdc.png" width="250"/>
+
+Final Product
+-------------
+<img src="https://cloud.githubusercontent.com/assets/4650077/7669323/b7132b6e-fc3b-11e4-8c8b-4c8a5be98c7a.jpg" width="250"/>
 
 Dependencies
 -----------

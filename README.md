@@ -54,7 +54,7 @@ output written to svg_pathSTL/svg_path97ptbird.stl
 
 Final Product
 -------------
-Depending on the resolution of your 3d printer, you will likely have to sand the letter face to be perfectly level. I used fine sandpaper while checking the height with a type gauge.
+Depending on the resolution of your 3d printer, you will likely have to sand the letter face to be perfectly level. I used fine sandpaper while checking the height with a type gauge (pictured above).
 
 My first print:
 

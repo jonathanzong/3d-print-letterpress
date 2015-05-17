@@ -3,7 +3,7 @@ Converts OpenType and TrueType (.otf and .ttf) files into 3D printable (.stl) mo
 
 This project brings together two technologies, old and new, that empower people through the democratization of production.
 
-<img src="https://cloud.githubusercontent.com/assets/4650077/7669322/b459ca72-fc3b-11e4-965d-63a610a43abe.jpg" width="250"/>
+<img src="https://cloud.githubusercontent.com/assets/4650077/7669372/5f308a92-fc3e-11e4-9a37-b9cc01d28f8c.jpg" width="250"/>
 
 Installation
 ------------

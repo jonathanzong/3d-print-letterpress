@@ -60,6 +60,9 @@ My first print:
 
 <img src="https://cloud.githubusercontent.com/assets/4650077/7669323/b7132b6e-fc3b-11e4-8c8b-4c8a5be98c7a.jpg" width="250"/>
 
+I chose a sans-serif letter T for its very geometric figure. The grooves are a byproduct of how the 3d printer extrudes. I like how it gives an indication of the material from which the type is made.
+
+
 Dependencies
 -----------
 3d-print-letterpress uses

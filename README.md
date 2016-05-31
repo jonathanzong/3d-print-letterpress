@@ -12,7 +12,7 @@ Installation
 
 Install via [npm](https://www.npmjs.org)
 ```
-$ npm install git+https://git@github.com:jonathanzong/3d-print-letterpress.git -g
+$ npm install 3d-print-letterpress -g
 ```
 
 Usage Example

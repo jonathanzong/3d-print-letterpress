@@ -8,11 +8,10 @@ This project brings together two technologies, old and new, that empower people 
 Installation
 ------------
 
-3d-print-letterpress requires [node.js](http://nodejs.org).
+3d-print-letterpress requires a relatively recent version of [Node.js](https://nodejs.org/) (tested with Node 24). Install globally via [npm](https://www.npmjs.org)
 
-Install via [npm](https://www.npmjs.org)
-```
-$ npm install 3d-print-letterpress -g
+```bash
+npm install 3d-print-letterpress -g
 ```
 
 Usage Example
@@ -67,9 +66,10 @@ Dependencies
 -----------
 3d-print-letterpress uses
 
-- [opentype](https://github.com/nodebox/opentype.js) -- parser for OpenType and TrueType formats
+- [opentype.js](https://github.com/opentypejs/opentype.js) -- parser for OpenType and TrueType formats
 - [JSModeler](https://github.com/kovacsv/JSModeler) -- 3D modeling library modifed here to work in Node.js (removed references to the DOM)
-- [node-raphael](https://github.com/dodo/node-raphael) -- SVG utility to perform path calculations
+- [svg-path-parser](https://github.com/hughsk/svg-path-parser) and [svg-path-properties](https://github.com/rveciana/svg-path-properties) -- utilities to interpret SVG path data and sample bezier curves
+- [@xmldom/xmldom](https://github.com/xmldom/xmldom) -- XML parser used to extract `<path>` elements from SVG files
 
 
 License

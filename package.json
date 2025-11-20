@@ -10,7 +10,8 @@
     }
   ],
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "test": "node --test tests/*.test.js"
   },
   "bin": "./index.js",
   "global": "true",
@@ -19,8 +20,25 @@
     "url": ""
   },
   "dependencies": {
-    "opentype": "git+ssh://git@github.com:nodebox/opentype.js.git",
-    "node-raphael": "git+ssh://git@github.com:dodo/node-raphael.git"
+    "@xmldom/xmldom": "^0.8.11",
+    "opentype.js": "^1.3.4",
+    "svg-path-parser": "^1.1.0",
+    "svg-path-properties": "^2.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "c8": "^10.1.3"
+  },
+  "c8": {
+    "include": [
+      "index.js",
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "lib/**",
+      "tests/**",
+      "coverage/**",
+      "tmp/**"
+    ]
+  }
 }
